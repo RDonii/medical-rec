@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
 from environs import Env
 
@@ -153,5 +154,15 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-   'AUTH_HEADER_TYPES': ('JWT',),
+    "AUTH_HEADER_TYPES": ("JWT",),
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=env.float("JWT_ACCESS_TOKEN_LIFETIME")),
+    "REFRESH_TOKEN_LIFETIME": timedelta(hours=env.float("JWT_REFRESH_TOKEN_LIFETIME")),
+}
+
+DJOSER = {
+    'PASSWORD_RESET_CONFIRM_URL': env.str("FRONTEND_PASSWORD_RESET_CONFIRM_URL", ""),
+    'USERNAME_RESET_CONFIRM_URL': env.str("FRONTEND_USERNAME_RESET_CONFIRM_URL", ""),
+    'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': True,
+    'USERNAME_RESET_SHOW_EMAIL_NOT_FOUND': True,
+    'TOKEN_MODEL': None,
 }
