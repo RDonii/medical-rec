@@ -68,20 +68,16 @@ class TestRetrieveUser:
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
-    def test_successful_retrieve_me(self, client):
-        user = baker.make(settings.AUTH_USER_MODEL)
-        client.force_authenticate(user=user)
+    def test_successful_retrieve_me(self, authenticated_client, new_user):
 
-        response = client.get(reverse('user-me'))
+        response = authenticated_client.get(reverse('user-me'))
 
         assert response.status_code == status.HTTP_200_OK
-        assert response.data["id"] == user.id
+        assert response.data["id"] == new_user.id
 
-    def test_if_differant_id_returns_404(self, client):
-        user = baker.make(settings.AUTH_USER_MODEL)
-        client.force_authenticate(user=user)
+    def test_if_differant_id_returns_404(self, authenticated_client, new_user):
 
-        response = client.get(reverse('user-detail', args=[user.id+1]))
+        response = authenticated_client.get(reverse('user-detail', args=[new_user.id+1]))
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
@@ -109,3 +105,41 @@ class TestListUser:
         assert response.status_code == status.HTTP_200_OK
         assert isinstance(response.data, list)
         assert len(response.data) == get_user_model().objects.count()
+
+@pytest.mark.django_db
+class TestUpdateUser:
+
+    def test_user_update(self, new_user, authenticated_client):
+        response = authenticated_client.patch(reverse('user-detail', args=[new_user.id]), data={
+            "first_name": "new_first_name",
+            "last_name": "new_last_name",
+            "email": "new_email@company.com"
+        })
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["first_name"] == "new_first_name"
+        assert response.data["last_name"] == "new_last_name"
+        assert response.data["email"] == "new_email@company.com"
+
+    def test_user_partial_update(self, authenticated_client, new_user):
+        response = authenticated_client.patch(reverse('user-detail', args=[new_user.id]), data={
+            "first_name": "new_first_name",
+        })
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["first_name"] == "new_first_name"
+        assert response.data["last_name"] == new_user.last_name
+
+@pytest.mark.django_db
+class TestDeleteUser:
+
+    def test_user_delete(self, client: APIClient, new_user_data):
+        # can not use baker when password must be hashed
+        User = get_user_model()
+        user = User.objects.create_user(**new_user_data)
+        client.force_authenticate(user=user)
+
+        response = client.delete(reverse('user-detail', args=[user.id]), data={
+            "current_password": new_user_data['password']
+        })
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not User.objects.filter(id=user.id).exists()
