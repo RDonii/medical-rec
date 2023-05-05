@@ -4,8 +4,11 @@ from api.models import Profile
 
 
 class ProfileSerializer(serializers.ModelSerializer):
-    user_id = serializers.IntegerField(read_only=True)
+    full_name = serializers.SerializerMethodField()
 
     class Meta:
         model = Profile
-        fields = ['id', 'company_name', 'birth_date', 'user_id']
+        fields = ['id', 'full_name', 'company_name', 'birth_date', 'user_id']
+
+    def get_full_name(self, profile: Profile) -> str:
+        return profile.user.get_full_name()

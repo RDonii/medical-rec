@@ -9,7 +9,7 @@ from api.serializers import ProfileSerializer
 
 
 class ProfileViewSet(ListModelMixin, UpdateModelMixin, GenericViewSet):
-    queryset = Profile.objects.all()
+    queryset = Profile.objects.select_related('user').all()
     serializer_class = ProfileSerializer
     permission_classes = [IsAdminUser]
 
