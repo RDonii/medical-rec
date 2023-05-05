@@ -5,8 +5,14 @@ from rest_framework.mixins import ListModelMixin, UpdateModelMixin
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.permissions import SAFE_METHODS
 
-from api.models import Patient, Profile
-from api.serializers import CreatePatientSerializer, FullPatientSerializer, PatientSerializer, ProfileSerializer
+from api.models import Material, Patient, Profile
+from api.serializers import (
+    CreatePatientSerializer,
+    FullPatientSerializer,
+    PatientSerializer,
+    ProfileSerializer,
+    MaterialSerializer,
+)
 
 
 class ProfileViewSet(ListModelMixin, UpdateModelMixin, GenericViewSet):
@@ -47,3 +53,20 @@ class PatientViewSet(ModelViewSet):
             else:
                 self.serializer_class = CreatePatientSerializer
         return super().get_serializer_class()
+
+
+class MaterialViewSet(ModelViewSet):
+    queryset = Material.objects.all()
+    serializer_class = MaterialSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        if not user.is_staff:
+            self.queryset = self.queryset.filter(patient__doctor_id=user.profile.id)
+        return super().get_queryset()
+    
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['patient_id'] = self.kwargs.get('patient_pk')
+        return context

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.models import Patient, Profile
+from api.models import Material, Patient, Profile
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -57,3 +57,14 @@ class CreatePatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
         fields = ['id', 'first_name', 'last_name', 'birth_date', 'gender', 'med_condition', 'doctor', 'created', 'updated',]
+
+
+class MaterialSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Material
+        fields = ['id', 'file', 'created', 'updated']
+    
+    def create(self, validated_data):
+        patient_id = self.context.get('patient_id')
+        return Material.objects.create(patient_id=patient_id, **validated_data)
