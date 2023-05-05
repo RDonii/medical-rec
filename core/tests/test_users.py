@@ -8,17 +8,6 @@ import pytest
 
 
 @pytest.fixture
-def client():
-    return APIClient()
-
-@pytest.fixture
-def new_user_data():
-    return {
-        "username": "testusername",
-        "password": "testpassword123"
-    }
-
-@pytest.fixture
 def new_user(new_user_data):
     return baker.make(settings.AUTH_USER_MODEL, **new_user_data)
 

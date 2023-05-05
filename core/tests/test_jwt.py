@@ -1,20 +1,8 @@
 from django.urls import reverse
 from django.contrib.auth import get_user_model
-from rest_framework.test import APIClient
 from rest_framework import status
 import pytest
 
-
-@pytest.fixture
-def new_user_data():
-    return {
-        "username": "testusername",
-        "password": "testpassword123"
-    }
-
-@pytest.fixture
-def client():
-    return APIClient()
 
 @pytest.fixture
 def new_user(new_user_data):
