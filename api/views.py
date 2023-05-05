@@ -1,11 +1,12 @@
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework.viewsets import GenericViewSet
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework.mixins import ListModelMixin, UpdateModelMixin
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import SAFE_METHODS
 
-from api.models import Profile
-from api.serializers import ProfileSerializer
+from api.models import Patient, Profile
+from api.serializers import CreatePatientSerializer, FullPatientSerializer, PatientSerializer, ProfileSerializer
 
 
 class ProfileViewSet(ListModelMixin, UpdateModelMixin, GenericViewSet):
@@ -24,3 +25,25 @@ class ProfileViewSet(ListModelMixin, UpdateModelMixin, GenericViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
+
+
+class PatientViewSet(ModelViewSet):
+    queryset = Patient.objects.all()
+    serializer_class = PatientSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        if not user.is_staff:
+            self.queryset = self.queryset.filter(doctor_id=user.profile.id)
+        elif user.is_staff:
+            self.queryset = self.queryset.select_related('doctor', 'doctor__user')
+        return super().get_queryset()
+    
+    def get_serializer_class(self):
+        if self.request.user.is_staff:
+            if self.request.method in SAFE_METHODS:
+                self.serializer_class = FullPatientSerializer
+            else:
+                self.serializer_class = CreatePatientSerializer
+        return super().get_serializer_class()
