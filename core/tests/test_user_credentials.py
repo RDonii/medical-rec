@@ -44,16 +44,16 @@ class TestUserPassword:
 class TestUserUsername:
 
     def test_set_new_username(self, authenticated_client, new_user, new_user_data):
-        User = get_user_model()
         new_username = "new_username"
 
         response = authenticated_client.post(reverse('user-set-username'), data={
             "new_username": new_username,
             "current_password": new_user_data["password"]
         })
+        new_user.refresh_from_db()
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert User.objects.get(id=new_user.id).get_username() == new_username
+        assert new_user.get_username() == new_username
     
     def test_set_new_username_with_invalid_current_password(self, authenticated_client):
         new_username = "new_username"
