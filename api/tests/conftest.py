@@ -51,3 +51,13 @@ def admin_client(admin_user, client):
 def user_client(user, client):
     client.force_authenticate(user=user)
     return client
+
+@pytest.fixture
+def patient_data():
+    return {
+        "first_name": "a",
+        "last_name": "b",
+        "birth_date": '1999-12-31',
+        "gender": "F",
+        "med_condition": "aabb"
+    }
