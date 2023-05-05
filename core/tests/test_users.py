@@ -83,8 +83,8 @@ class TestListUser:
         response = authenticated_client.get(reverse('user-list'))
 
         assert response.status_code == status.HTTP_200_OK
-        assert isinstance(response.data, list)
-        assert len(response.data) == 1
+        assert isinstance(response.data['results'], list)
+        assert len(response.data['results']) == 1
 
     def test_if_user_is_staff_returns_all_users(self, authenticated_staff_client):
         baker.make(settings.AUTH_USER_MODEL, __quantity=8)
@@ -92,8 +92,8 @@ class TestListUser:
         response = authenticated_staff_client.get(reverse('user-list'))
 
         assert response.status_code == status.HTTP_200_OK
-        assert isinstance(response.data, list)
-        assert len(response.data) == get_user_model().objects.count()
+        assert isinstance(response.data["results"], list)
+        assert len(response.data["results"]) == get_user_model().objects.count()
 
 @pytest.mark.django_db
 class TestUpdateUser:
