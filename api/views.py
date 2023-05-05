@@ -62,6 +62,7 @@ class MaterialViewSet(ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        self.queryset = self.queryset.filter(patient_id=self.kwargs["patient_pk"])
         if not user.is_staff:
             self.queryset = self.queryset.filter(patient__doctor_id=user.profile.id)
         return super().get_queryset()
