@@ -77,8 +77,8 @@ API documentation URLs:
 For testing, use the [PyTest](https://docs.pytest.org/en/7.3.x/) framework.
 Run all tests with the following command:
 
-    ```
+
         pytest
-    ```
+        
 
 Alternatively, use the preconfigured testing tab of VSCode.
