@@ -172,8 +172,8 @@ SPECTACULAR_SETTINGS = {
 
 SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("JWT",),
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=env.float("JWT_ACCESS_TOKEN_LIFETIME")),
-    "REFRESH_TOKEN_LIFETIME": timedelta(hours=env.float("JWT_REFRESH_TOKEN_LIFETIME")),
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=env.float("JWT_ACCESS_TOKEN_LIFETIME", 0.5)),
+    "REFRESH_TOKEN_LIFETIME": timedelta(hours=env.float("JWT_REFRESH_TOKEN_LIFETIME", 24)),
 }
 
 DJOSER = {
