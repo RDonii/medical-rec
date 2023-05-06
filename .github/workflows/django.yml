@@ -36,6 +36,7 @@ jobs:
         run: python manage.py migrate
 
       - name: Set environment variable
+        run: echo "Set environment variable"
         env:
           SECRET_KEY: super-secret-key
           HOSTS: 127.0.0.1
