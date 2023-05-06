@@ -25,11 +25,11 @@ class Patient(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return f'{self.first_name} {self.last_name}'
-
     class Meta:
         ordering = ['updated', 'first_name', 'last_name']
+
+    def __str__(self):
+        return f'{self.first_name} {self.last_name}'
 
 
 class Material(models.Model):
@@ -37,6 +37,10 @@ class Material(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['updated', 'created']
+
 
     def __str__(self):
         return self.file.name
