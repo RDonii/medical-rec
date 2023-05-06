@@ -1,5 +1,8 @@
+from typing import Union, Any
 from rest_framework.response import Response
+from rest_framework.request import Request
 from rest_framework.decorators import action
+from rest_framework import status
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework.mixins import ListModelMixin, UpdateModelMixin
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
@@ -71,3 +74,33 @@ class MaterialViewSet(ModelViewSet):
         context = super().get_serializer_context()
         context['patient_id'] = self.kwargs.get('patient_pk')
         return context
+
+    def list(self, request, *args, **kwargs):
+        patient_404 = self.has_parent_patient(request, kwargs['patient_pk'])
+        if patient_404:
+            return patient_404
+
+        return super().list(request, *args, **kwargs)
+    
+    def create(self, request, *args, **kwargs):
+        patient_404 = self.has_parent_patient(request, kwargs['patient_pk'])
+        if patient_404:
+            return patient_404
+
+        return super().create(request, *args, **kwargs)
+
+    def has_parent_patient(self, request: Request, patient_pk: Any) -> Union[Response, None]:
+        '''
+        Returns 404 response object if parent patient object does not exist or 
+        parent patient object is not relative for non admin user
+        '''
+        if request.user.is_staff:
+            patient = Patient.objects.filter(id=patient_pk)
+        else:
+            patient = Patient.objects.filter(id=patient_pk, doctor=request.user.profile)
+
+        if not patient.exists():
+            return Response(
+                {'detail': 'Patient not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
