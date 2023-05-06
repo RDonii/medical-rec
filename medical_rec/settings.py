@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'django_filters',
     'djoser',
     'debug_toolbar',
+    'drf_spectacular',
     'core',
     'api',
 ]
@@ -159,7 +160,15 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 50
+    'PAGE_SIZE': 50,
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'MedicalRec',
+    'DESCRIPTION': "RESTful service that allows doctors and medical professionals to access and update a patient's medical history.",
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': True,
 }
 
 SIMPLE_JWT = {
