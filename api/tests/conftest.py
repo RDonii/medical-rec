@@ -1,8 +1,9 @@
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 import pytest
+from model_bakery import baker
 
-from api.models import Profile
+from api.models import Patient
 
 
 @pytest.fixture
@@ -61,3 +62,11 @@ def patient_data():
         "gender": "F",
         "med_condition": "aabb"
     }
+
+@pytest.fixture
+def user_patient(user):
+    return baker.make(Patient, doctor=user.profile)
+
+@pytest.fixture
+def admin_patient(admin_user):
+    return baker.make(Patient, doctor=admin_user.profile)

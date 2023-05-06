@@ -5,14 +5,6 @@ import pytest
 
 from api.models import Patient
 
-@pytest.fixture
-def user_patient(user):
-    return baker.make(Patient, doctor=user.profile)
-
-@pytest.fixture
-def admin_patient(admin_user):
-    return baker.make(Patient, doctor=admin_user.profile)
-
 
 @pytest.mark.django_db
 class TestCreatePatient:
