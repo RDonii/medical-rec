@@ -11,3 +11,4 @@ djoser==2.2.0
 djangorestframework-simplejwt==5.2.2
 drf-nested-routers==0.93.4
 drf-spectacular==0.26.2
+django-cors-headers

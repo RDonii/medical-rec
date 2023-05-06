@@ -30,16 +30,13 @@ SECRET_KEY = env.str("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG", False)
 
-ALLOWED_HOSTS = [
-    env.str('HOST'),
-]
+ALLOWED_HOSTS = env.list('HOSTS')
+CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS')
 
 if DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True
     ALLOWED_HOSTS += ['localhost', '127.0.0.1']
-    INTERNAL_IPS = [
-        "127.0.0.1",
-        env.str('HOST'),
-    ]
+    INTERNAL_IPS = ["127.0.0.1"] + env.list('HOSTS')
 
 # Application definition
 
@@ -55,11 +52,13 @@ INSTALLED_APPS = [
     'djoser',
     'debug_toolbar',
     'drf_spectacular',
+    'corsheaders',
     'core',
     'api',
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
