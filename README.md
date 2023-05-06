@@ -2,18 +2,18 @@
 
 ## Description
 
-RESTful service that allows doctors and medical professionals to access and update a patient's medical history. The service allows for basic CRUD operations, including creating new patient records, retrieving existing patient records, updating existing patient records, and deleting patient records.
+Medical-Rec is a RESTful service that allows doctors and medical professionals to access and update a patient's medical history. The service allows for basic CRUD operations, including creating new patient records, retrieving existing patient records, updating existing patient records, and deleting patient records.
 
 ---
 ## Installation
 
-> Project built and tested with python 3.10.11 and Postgresql 14 version
+> To install the Medical-Rec service, you will need Python 3.10.11 and Postgresql 14 version.
 
-There are two way of installations provided.
-- [installing with docker compose](#docker-installation)
-- [installing on host machine](#local-installation)
+There are two installation methods available:
+- [Installing with docker compose](#docker-installation)
+- [Installing on the host machine](#local-installation)
 
-On both ways, the first step is creating .env file from env-example file. Here is some explenations for the environment variables:
+Before installation, create a .env file from the provided env-example file. In the .env file, provide values for the following environment variables:
 
 |variable name|reuqired|description|
 |---|---|---|
@@ -35,39 +35,50 @@ On both ways, the first step is creating .env file from env-example file. Here i
 ### Docker installation
 
 You must have docker compose preinstalled on your machine.
-1. Configure desired environment variables in [docker-compose file](https://github.com/RDonii/medical-rec/blob/0078bb2decdfb50f01d8a19229228cbefb92edef/docker-compose.yml#L6) for db service. They must be exact same as in .env file.
+1. For Docker installation, make sure that you have Docker Compose pre-installed on your machine. Configure desired environment variables in the [docker-compose file](https://github.com/RDonii/medical-rec/blob/0078bb2decdfb50f01d8a19229228cbefb92edef/docker-compose.yml#L6) for the database service. They must be the exact same as in the .env file. Run the following command to start the service:
+
 2. Run following command:
     ```
         docker compose up
     ```
-Project will run on 80 port of your machine.
+The service will run on port 80 of your machine.
 
 ### Local installation
 
-1. Suggested firstly activate virtual python environment, such as pipenv, virtualenv or conda.
-2. Set DEBUG=True in order to serve static and media files on development server
-3. Create Database
-4. Install dependencies. 
+For local installation, it is suggested to activate a virtual Python environment such as pipenv, virtualenv, or conda.
+1. Set DEBUG=True to serve static and media files on the development server.
+
+2. Create a database.
+
+3. Install dependencies
+
     ```
         pip install -r requirements.txt
     ```
-5. Run development server
+
+4. Migrate tables and run the development server with the following commands:
+
     ```
+        python manage.py migrate
         python manage.py runserver
     ```
 ---
 ## Usage
 
-API documentation urls:
+API documentation URLs:
 - Swagger: /doc/swagger-ui
 - ReDoc: /doc/redoc
 
 ---
-### Testing
+## Testing
 
-For the testing [PyTest](https://docs.pytest.org/en/7.3.x/) framework user.
-To run all tests, run following command:
+> Note: If you used the Docker Compose installation method, the test service runs all tests before running the web service.
+
+For testing, use the [PyTest](https://docs.pytest.org/en/7.3.x/) framework.
+Run all tests with the following command:
+
     ```
         pytest
     ```
-or use prevonfigured testing tab of Viescode.
+
+Alternatively, use the preconfigured testing tab of VSCode.
