@@ -7,6 +7,8 @@ from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework.mixins import ListModelMixin, UpdateModelMixin
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.permissions import SAFE_METHODS
+from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 
 from api.models import Material, Patient, Profile
 from api.serializers import (
@@ -40,6 +42,10 @@ class PatientViewSet(ModelViewSet):
     queryset = Patient.objects.all()
     serializer_class = PatientSerializer
     permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = ['birth_date']
+    search_fields = ['first_name', 'last_name', 'med_condition']
+    ordering_fields = ['birth_date', 'created_at']
 
     def get_queryset(self):
         user = self.request.user
