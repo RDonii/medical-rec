@@ -32,9 +32,6 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Set up database
-        run: python manage.py migrate
-
       - name: Set environment variable
         run: echo "Set environment variable"
         env:
@@ -46,6 +43,9 @@ jobs:
           DB_PASSWORD: postgres
           DB_PORT: 5432
           DB_HOST: localhost
+
+      - name: Set up database
+        run: python manage.py migrate
 
       - name: Run tests
         run: |
