@@ -69,8 +69,8 @@ class TestListPatient:
 class TestRetrievePatient:
     url_name = 'patient-detail'
 
-    def test_if_user_anonymous_returns_401(self, client, user):
-        response = client.get(reverse(self.url_name, args=[user.id]))
+    def test_if_user_anonymous_returns_401(self, client, user_patient):
+        response = client.get(reverse(self.url_name, args=[user_patient.id]))
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
     
@@ -79,7 +79,7 @@ class TestRetrievePatient:
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
     
-    def test_success_retrieve_related(self, user_client, user, user_patient):
+    def test_success_retrieve_related(self, user_client, user_patient):
         response = user_client.get(reverse(self.url_name, args=[user_patient.id]))
 
         assert response.status_code == status.HTTP_200_OK
@@ -178,3 +178,25 @@ class TestUpdatePatient:
         assert str(user_patient.birth_date) == old_data["birth_date"]
         assert user_patient.med_condition == old_data["med_condition"]
         assert user_patient.doctor_id == user.profile.id
+
+
+@pytest.mark.django_db
+class TestDeletePatient:
+    url_name = 'patient-detail'
+
+    def test_if_user_anonymous_returns_401(self, client, user_patient):
+        response = client.delete(reverse(self.url_name, args=[user_patient.id]))
+
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_success_delete_with_admin_user(self, admin_client, user_patient):
+        response = admin_client.delete(reverse(self.url_name, args=[user_patient.id]))
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not Patient.objects.filter(id=user_patient.id).exists()
+    
+    def test_success_delete_with_not_admin_user(self, user_client, user_patient):
+        response = user_client.delete(reverse(self.url_name, args=[user_patient.id]))
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not Patient.objects.filter(id=user_patient.id).exists()
